@@ -29,7 +29,7 @@
             "description": "3 failed login attempts for admin from 192.168.1.105 within 5 minutes.",
             "recommended_action": "Investigate the source IP, review authentication logs and check whether the account was compromised."
         },
-        "created_at": "2026-11-19T06:47:13.081690+00:00"
+        "created_at": "2026-11-19T07:26:38.151133+00:00"
     },
     {
         "incident_id": "INC-0002",
@@ -64,7 +64,7 @@
             "description": "PowerShell execution contains suspicious command-line indicators.",
             "recommended_action": "Review the process command line, parent process, user account and related endpoint activity."
         },
-        "created_at": "2026-11-19T06:47:13.081722+00:00"
+        "created_at": "2026-11-19T07:26:38.151183+00:00"
     },
     {
         "incident_id": "INC-0003",
@@ -97,6 +97,6 @@
             "description": "Outbound connection detected to 203.0.113.50 on port 4444.",
             "recommended_action": "Review network traffic, destination reputation, process ownership and endpoint activity."
         },
-        "created_at": "2026-11-19T06:47:13.081726+00:00"
+        "created_at": "2026-11-19T07:26:38.151188+00:00"
     }
 ]

@@ -24,6 +24,11 @@ The project uses simulated security events and custom Python detection rules to 
 - Interactive security dashboard
 - PDF incident investigation reports
 - Automated unit and API tests
+- Live Linux SSH authentication log collection from `/var/log/auth.log`
+- Detection of failed logins, successful logins, and invalid SSH users
+- Duplicate-event prevention during authentication log imports
+- Integration of live Linux authentication events into the central detection pipeline
+- Automated test coverage for Linux authentication log parsing
 
 ## Technology Stack
 
