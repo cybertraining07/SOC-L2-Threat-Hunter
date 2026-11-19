@@ -1,0 +1,41 @@
+[
+    {
+        "incident_id": "INC-0001",
+        "severity": "HIGH",
+        "alert_name": "Possible SSH Brute-Force Activity",
+        "response_recommendations": [
+            "Review SSH authentication logs.",
+            "Verify whether the targeted account was compromised.",
+            "Check for successful logins from the suspicious IP.",
+            "Review source IP reputation and related activity.",
+            "Consider blocking the source IP if malicious activity is confirmed.",
+            "Review SSH access controls and disable password authentication where appropriate."
+        ]
+    },
+    {
+        "incident_id": "INC-0002",
+        "severity": "HIGH",
+        "alert_name": "Suspicious PowerShell Execution",
+        "response_recommendations": [
+            "Review the PowerShell command line and process execution logs.",
+            "Investigate the parent process and initiating user account.",
+            "Check for encoded commands, downloaded files and suspicious scripts.",
+            "Review endpoint telemetry for related process and network activity.",
+            "Isolate the endpoint if malicious activity is confirmed.",
+            "Preserve relevant logs and evidence for investigation."
+        ]
+    },
+    {
+        "incident_id": "INC-0003",
+        "severity": "HIGH",
+        "alert_name": "Suspicious Outbound Network Connection",
+        "response_recommendations": [
+            "Investigate the destination IP address and destination port.",
+            "Review firewall and network traffic logs.",
+            "Identify the process responsible for the outbound connection.",
+            "Check whether other endpoints contacted the same destination.",
+            "Consider blocking the destination if malicious activity is confirmed.",
+            "Preserve relevant network and endpoint evidence."
+        ]
+    }
+]

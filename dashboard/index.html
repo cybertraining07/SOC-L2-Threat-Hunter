@@ -1,0 +1,600 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SOC L2 Threat Hunter security monitoring dashboard">
+    <title>SOC L2 Threat Hunter</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b1120;
+            color: #e5e7eb;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #263449;
+        }
+
+        h1 {
+            color: #38bdf8;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .online {
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .online::before {
+            content: "";
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        button {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        button:focus-visible {
+            outline: 2px solid #7dd3fc;
+            outline-offset: 3px;
+        }
+
+        .section-title {
+            color: #f1f5f9;
+            font-size: 20px;
+            margin: 30px 0 15px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .metric-card {
+            background: #172338;
+            border: 1px solid #263449;
+            border-radius: 10px;
+            padding: 22px;
+        }
+
+        .metric-card h3 {
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: normal;
+            margin-bottom: 12px;
+        }
+
+        .metric-card p {
+            color: #38bdf8;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: #172338;
+            border: 1px solid #263449;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #263449;
+            font-size: 13px;
+        }
+
+        th {
+            background: #1e293b;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        td {
+            color: #d1d5db;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .severity-high {
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .severity-critical {
+            color: #fb7185;
+            font-weight: bold;
+        }
+
+        .severity-medium {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .severity-low {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .status {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .recommendation-card {
+            background: #172338;
+            border: 1px solid #263449;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .recommendation-card h3 {
+            color: #38bdf8;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .recommendation-card ul {
+            padding-left: 20px;
+        }
+
+        .recommendation-card li {
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+        .empty-message {
+            color: #94a3b8;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #lastUpdated {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #f87171 !important;
+        }
+
+        footer {
+            border-top: 1px solid #263449;
+            margin-top: 35px;
+            padding-top: 20px;
+            color: #64748b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 850px) {
+            .metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div>
+            <h1>SOC L2 Threat Hunter</h1>
+            <p class="subtitle">
+                Security Monitoring, Threat Detection and Incident Response
+            </p>
+        </div>
+
+        <div>
+            <p class="online">Dashboard Interface</p>
+            <button id="refreshButton" type="button">
+                Refresh Dashboard
+            </button>
+        </div>
+    </header>
+
+    <h2 class="section-title">Security Overview</h2>
+
+    <section class="metrics">
+
+        <div class="metric-card">
+            <h3>Total Security Events</h3>
+            <p id="totalEvents">0</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>Total Alerts</h3>
+            <p id="totalAlerts">0</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>High Severity Alerts</h3>
+            <p id="highAlerts">0</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>Critical Alerts</h3>
+            <p id="criticalAlerts">0</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>Total Incidents</h3>
+            <p id="totalIncidents">0</p>
+        </div>
+
+        <div class="metric-card">
+            <h3>Active Incidents</h3>
+            <p id="openIncidents">0</p>
+        </div>
+
+    </section>
+
+    <h2 class="section-title">Security Alerts</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alert Name</th>
+                    <th>Severity</th>
+                    <th>Source IP</th>
+                    <th>Username</th>
+                    <th>MITRE ATT&CK</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="alertsTable">
+                <tr>
+                    <td colspan="6" class="empty-message">
+                        Loading alerts...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="section-title">Incident Management</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Incident ID</th>
+                    <th>Alert Name</th>
+                    <th>Severity</th>
+                    <th>Source IP</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="incidentsTable">
+                <tr>
+                    <td colspan="5" class="empty-message">
+                        Loading incidents...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="section-title">Incident Response Recommendations</h2>
+
+    <section id="recommendations" class="recommendations">
+        <p class="empty-message">Loading recommendations...</p>
+    </section>
+
+    <p id="lastUpdated" aria-live="polite">
+        Connecting to SOC API...
+    </p>
+
+    <footer>
+        SOC L2 Threat Hunter | Security Monitoring and Incident Response
+    </footer>
+
+</div>
+
+<script>
+"use strict";
+
+// Safely create a table cell.
+function createCell(value, className = "") {
+    const cell = document.createElement("td");
+
+    cell.textContent =
+        value === null || value === undefined || value === ""
+            ? "N/A"
+            : String(value);
+
+    if (className) {
+        cell.className = className;
+    }
+
+    return cell;
+}
+
+// Apply severity styling.
+function getSeverityClass(severity) {
+    const value = String(severity || "").toUpperCase();
+
+    if (value === "CRITICAL") return "severity-critical";
+    if (value === "HIGH") return "severity-high";
+    if (value === "MEDIUM") return "severity-medium";
+    if (value === "LOW") return "severity-low";
+
+    return "";
+}
+
+// Safely display a message inside a table.
+function showTableMessage(element, message, columnCount) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+
+    cell.colSpan = columnCount;
+    cell.className = "empty-message";
+    cell.textContent = message;
+
+    row.appendChild(cell);
+    element.replaceChildren(row);
+}
+
+// Render alert records.
+function renderAlerts(alerts) {
+    const table = document.getElementById("alertsTable");
+    table.replaceChildren();
+
+    if (!alerts.length) {
+        showTableMessage(table, "No security alerts detected.", 6);
+        return;
+    }
+
+    alerts.forEach(alert => {
+        const row = document.createElement("tr");
+
+        row.append(
+            createCell(alert.alert_name),
+            createCell(alert.severity, getSeverityClass(alert.severity)),
+            createCell(alert.source_ip),
+            createCell(alert.username),
+            createCell(alert.mitre_attack),
+            createCell(alert.status)
+        );
+
+        table.appendChild(row);
+    });
+}
+
+// Render incident records.
+function renderIncidents(incidents) {
+    const table = document.getElementById("incidentsTable");
+    table.replaceChildren();
+
+    if (!incidents.length) {
+        showTableMessage(table, "No incidents recorded.", 5);
+        return;
+    }
+
+    incidents.forEach(incident => {
+        const row = document.createElement("tr");
+
+        row.append(
+            createCell(incident.incident_id),
+            createCell(incident.alert_name),
+            createCell(incident.severity, getSeverityClass(incident.severity)),
+            createCell(incident.source_ip),
+            createCell(incident.status, "status")
+        );
+
+        table.appendChild(row);
+    });
+}
+
+// Render incident response recommendations.
+function renderRecommendations(items) {
+    const container = document.getElementById("recommendations");
+    container.replaceChildren();
+
+    if (!items.length) {
+        const message = document.createElement("p");
+        message.className = "empty-message";
+        message.textContent = "No response recommendations available.";
+        container.appendChild(message);
+        return;
+    }
+
+    items.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "recommendation-card";
+
+        const heading = document.createElement("h3");
+        heading.textContent =
+            `${item.incident_id || "Incident"} - ${item.severity || "Unknown"}`;
+
+        const list = document.createElement("ul");
+
+        const actions = Array.isArray(item.response_recommendations)
+            ? item.response_recommendations
+            : [];
+
+        actions.forEach(action => {
+            const listItem = document.createElement("li");
+            listItem.textContent = String(action);
+            list.appendChild(listItem);
+        });
+
+        card.append(heading, list);
+        container.appendChild(card);
+    });
+}
+
+// Update dashboard metrics.
+function updateMetrics(data) {
+    document.getElementById("totalEvents").textContent =
+        data.total_events ?? 0;
+
+    document.getElementById("totalAlerts").textContent =
+        data.total_alerts ?? 0;
+
+    document.getElementById("highAlerts").textContent =
+        data.high_alerts ?? 0;
+
+    document.getElementById("criticalAlerts").textContent =
+        data.critical_alerts ?? 0;
+
+    document.getElementById("totalIncidents").textContent =
+        data.total_incidents ?? 0;
+
+    document.getElementById("openIncidents").textContent =
+        data.open_incidents ?? 0;
+}
+
+// Load dashboard information from FastAPI.
+async function loadDashboard() {
+    const status = document.getElementById("lastUpdated");
+    const button = document.getElementById("refreshButton");
+
+    button.disabled = true;
+    button.textContent = "Refreshing...";
+
+    try {
+        const response = await fetch("/api/dashboard", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            },
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data || typeof data !== "object") {
+            throw new Error("Invalid dashboard response.");
+        }
+
+        const alerts = Array.isArray(data.alerts) ? data.alerts : [];
+        const incidents = Array.isArray(data.incidents)
+            ? data.incidents
+            : [];
+
+        const recommendations = Array.isArray(data.recommendations)
+            ? data.recommendations
+            : [];
+
+        updateMetrics(data);
+        renderAlerts(alerts);
+        renderIncidents(incidents);
+        renderRecommendations(recommendations);
+
+        status.classList.remove("error");
+        status.textContent =
+            "Last updated: " + new Date().toLocaleString();
+
+    } catch (error) {
+        status.classList.add("error");
+        status.textContent =
+            "Unable to load dashboard data. Check the API server.";
+
+        console.error("Dashboard loading error:", error);
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "Refresh Dashboard";
+    }
+}
+
+// Refresh button.
+document.getElementById("refreshButton").addEventListener(
+    "click",
+    loadDashboard
+);
+
+// Initial dashboard loading.
+loadDashboard();
+</script>
+
+</body>
+</html>

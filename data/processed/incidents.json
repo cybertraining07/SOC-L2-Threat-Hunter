@@ -1,0 +1,102 @@
+[
+    {
+        "incident_id": "INC-0001",
+        "rule_id": "SOC-AUTH-001",
+        "alert_name": "Possible SSH Brute-Force Activity",
+        "severity": "HIGH",
+        "source_ip": "192.168.1.105",
+        "destination_ip": null,
+        "destination_port": null,
+        "hostname": "kali-lab",
+        "username": "admin",
+        "process_name": null,
+        "matched_patterns": [],
+        "failed_attempts": 3,
+        "mitre_attack": "T1110",
+        "status": "UNDER_INVESTIGATION",
+        "analyst_notes": "Initial assessment: 3 failed login attempts targeting account admin from 192.168.1.105 on host kali-lab. Review authentication logs, check for successful logins from the source IP, and determine whether the account was compromised. Investigation pending.",
+        "alert_details": {
+            "rule_id": "SOC-AUTH-001",
+            "alert_name": "Possible SSH Brute-Force Activity",
+            "severity": "HIGH",
+            "source_ip": "192.168.1.105",
+            "username": "admin",
+            "hostname": "kali-lab",
+            "failed_attempts": 3,
+            "time_window_minutes": 5,
+            "mitre_attack": "T1110",
+            "status": "OPEN",
+            "description": "3 failed login attempts for admin from 192.168.1.105 within 5 minutes.",
+            "recommended_action": "Investigate the source IP, review authentication logs and check whether the account was compromised."
+        },
+        "created_at": "2026-11-19T06:47:13.081690+00:00"
+    },
+    {
+        "incident_id": "INC-0002",
+        "rule_id": "SOC-ENDPOINT-001",
+        "alert_name": "Suspicious PowerShell Execution",
+        "severity": "HIGH",
+        "source_ip": null,
+        "destination_ip": null,
+        "destination_port": null,
+        "hostname": "windows-lab",
+        "username": "user1",
+        "process_name": "powershell.exe",
+        "matched_patterns": [
+            "ENCODED_COMMAND"
+        ],
+        "failed_attempts": null,
+        "mitre_attack": "T1059.001",
+        "status": "UNDER_INVESTIGATION",
+        "analyst_notes": "Initial assessment: suspicious PowerShell activity detected on windows-lab, involving powershell.exe under account user1. Matched indicators: ENCODED_COMMAND. Review the command line, parent process and related endpoint activity. Investigation pending.",
+        "alert_details": {
+            "rule_id": "SOC-ENDPOINT-001",
+            "alert_name": "Suspicious PowerShell Execution",
+            "severity": "HIGH",
+            "hostname": "windows-lab",
+            "username": "user1",
+            "process_name": "powershell.exe",
+            "matched_patterns": [
+                "ENCODED_COMMAND"
+            ],
+            "mitre_attack": "T1059.001",
+            "status": "OPEN",
+            "description": "PowerShell execution contains suspicious command-line indicators.",
+            "recommended_action": "Review the process command line, parent process, user account and related endpoint activity."
+        },
+        "created_at": "2026-11-19T06:47:13.081722+00:00"
+    },
+    {
+        "incident_id": "INC-0003",
+        "rule_id": "SOC-NETWORK-001",
+        "alert_name": "Suspicious Outbound Network Connection",
+        "severity": "HIGH",
+        "source_ip": "192.168.1.20",
+        "destination_ip": "203.0.113.50",
+        "destination_port": 4444,
+        "hostname": "kali-lab",
+        "username": null,
+        "process_name": null,
+        "matched_patterns": [],
+        "failed_attempts": null,
+        "mitre_attack": "T1571",
+        "status": "UNDER_INVESTIGATION",
+        "analyst_notes": "Initial assessment: suspicious outbound connection from 192.168.1.20 on host kali-lab to 203.0.113.50:4444. Review network traffic, destination reputation and the process responsible for the connection. Investigation pending.",
+        "alert_details": {
+            "rule_id": "SOC-NETWORK-001",
+            "alert_name": "Suspicious Outbound Network Connection",
+            "severity": "HIGH",
+            "hostname": "kali-lab",
+            "source_ip": "192.168.1.20",
+            "destination_ip": "203.0.113.50",
+            "destination_port": 4444,
+            "username": null,
+            "indicator": "Potential reverse-shell communication",
+            "mitre_attack": "T1571",
+            "status": "OPEN",
+            "description": "Outbound connection detected to 203.0.113.50 on port 4444.",
+            "recommended_action": "Review network traffic, destination reputation, process ownership and endpoint activity."
+        },
+        "created_at": "2026-11-19T06:47:13.081726+00:00"
+    }
+]
